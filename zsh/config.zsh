@@ -48,4 +48,4 @@ bindkey '^[[3~' delete-char
 bindkey '^[^N' newtab
 bindkey '^?' backward-delete-char
 
-WORDCHARS="${WORDCHARS//[&=\/;!#%{]-}"
+WORDCHARS="${WORDCHARS//[&=\/;\{-!#._]/}"
