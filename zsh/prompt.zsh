@@ -1,7 +1,7 @@
 autoload -U colors && colors
 
 git_prompt_info () {
-   ref=$(/usr/bin/git symbolic-ref HEAD 2>/dev/null) || return
+   ref=$(git symbolic-ref HEAD 2>/dev/null) || return
     echo "%{$fg[gray]%}‹${ref#refs/heads/}› %{$reset_color%}"
 }
 
