@@ -14,8 +14,10 @@ git_branch() {
 }
 
 git_dirty() {
-  st=$($git status 2>/dev/null | tail -n 1)
-  if [[ $st == "" ]]
+  st=$($git status 2>/dev/null)
+  exit_status=$?
+  st=$(echo $st | tail -n 1)
+  if [[ "$exit_status" -ne 0 ]]
   then
     echo ""
   else
@@ -76,7 +78,7 @@ todo(){
 }
 
 directory_name(){
-  echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
+  echo "%{$fg_bold[cyan]%}%d%\/%{$reset_color%}"
 }
 
 export PROMPT=$'\n$(rb_prompt) in $(directory_name) $(git_dirty)$(need_push)\n› '
@@ -84,5 +86,5 @@ set_prompt () {
   export RPROMPT="%{$fg_bold[cyan]%}$(todo)%{$reset_color%}"
 }
 
-PROMPT="╭─ ${user_host} ${current_dir} ${git_branch} 
-╰─%B$%b "
+PROMPT='╭─ $(whoami)@$(hostname -s)%{$fg_bold[red]%}%(?,, -%?-)%{$reset_color%} $(directory_name) $(git_dirty)
+╰─%B$%b '
