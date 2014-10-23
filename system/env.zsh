@@ -1,7 +1,7 @@
 export PATH=/Applications/Emacs.app/Contents/MacOS/bin:$HOME/bin:/usr/local/sbin:/usr/local/bin:$PATH:/usr/games:$HOME/bin/scripts
 export EDITOR=emacsclient
 export PAGER=less
-export JAVA_HOME=`/usr/libexec/java_home -v 1.6.0`
+export JAVA_HOME=`/usr/libexec/java_home -v 1.7.0`
 
 export REBEL_HOME=/Applications/Development/JRebel
 export MAVEN_OPTS="-Xmx2048m -XX:MaxPermSize=4096m"
