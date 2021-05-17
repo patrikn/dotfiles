@@ -4,9 +4,9 @@ autoload colors && colors
 
 if (( $+commands[git] ))
 then
-  git=$commands[git]
+  git="$commands[git]"
 else
-  git=/usr/bin/git
+  git="/usr/bin/git"
 fi
 
 git_branch() {
@@ -14,14 +14,15 @@ git_branch() {
 }
 
 git_dirty() {
-  st=$($git status 2>/dev/null)
-  exit_status=$?
-  st=$(echo $st | tail -n 1)
-  if [[ "$exit_status" -ne 0 ]]
+  # st=$($git status 2>/dev/null)
+  # exit_status=$?
+  # st=$(echo $st | tail -n 1)
+  # if [[ "$exit_status" -ne 0 ]]
+  if $(! $git status -s &> /dev/null)
   then
     echo ""
   else
-    if [[ "$st" =~ ^nothing ]]
+    if [[ $($git status --porcelain) == "" ]]
     then
       echo "on %{$fg_bold[green]%}$(git_prompt_info)%{$reset_color%}"
     else
@@ -36,54 +37,42 @@ git_prompt_info () {
  echo "${ref#refs/heads/}"
 }
 
-unpushed () {
-  $git cherry -v @{upstream} 2>/dev/null
-}
-
+# This assumes that you always have an origin named `origin`, and that you only
+# care about one specific origin. If this is not the case, you might want to use
+# `$git cherry -v @{upstream}` instead.
 need_push () {
-  if [[ $(unpushed) == "" ]]
+  if [ $($git rev-parse --is-inside-work-tree 2>/dev/null) ]
   then
-    echo " "
-  else
-    echo " with %{$fg_bold[magenta]%}unpushed%{$reset_color%} "
-  fi
-}
+    number=$($git cherry -v origin/$(git symbolic-ref --short HEAD) 2>/dev/null | wc -l | bc)
 
-rb_prompt(){
-  if (( $+commands[rbenv] ))
-  then
-	  echo "%{$fg_bold[yellow]%}$(rbenv version | awk '{print $1}')%{$reset_color%}"
-	else
-	  echo ""
-  fi
-}
-
-# This keeps the number of todos always available the right hand side of my
-# command line. I filter it to only count those tagged as "+next", so it's more
-# of a motivation to clear out the list.
-todo(){
-  if (( $+commands[todo.sh] ))
-  then
-    num=$(echo $(todo.sh ls +next | wc -l))
-    let todos=num-2
-    if [ $todos != 0 ]
+    if [[ $number == 0 ]]
     then
-      echo "$todos"
+      echo " "
     else
-      echo ""
+      echo " with %{$fg_bold[magenta]%}$number unpushed%{$reset_color%}"
     fi
-  else
-    echo ""
   fi
 }
 
-directory_name(){
+directory_name() {
   echo "%{$fg_bold[cyan]%}%d%\/%{$reset_color%}"
 }
 
-export PROMPT=$'\n$(rb_prompt) in $(directory_name) $(git_dirty)$(need_push)\n› '
+battery_status() {
+  if test ! "$(uname)" = "Darwin"
+  then
+    exit 0
+  fi
+
+  if [[ $(sysctl -n hw.model) == *"Book"* ]]
+  then
+    $ZSH/bin/battery-status
+  fi
+}
+
+export PROMPT=$'\n$(battery_status)in $(directory_name) $(git_dirty)$(need_push)\n› '
 set_prompt () {
-  export RPROMPT="%{$fg_bold[cyan]%}$(todo)%{$reset_color%}"
+  export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
 }
 
 PROMPT='╭─ $(whoami)@$(hostname -s)%{$fg_bold[red]%}%(?,, -%?-)%{$reset_color%} $(directory_name) $(git_dirty)
