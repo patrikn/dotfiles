@@ -4,7 +4,7 @@ stty start undef
 export LSCOLORS="exfxcxdxbxegedabagacad"
 export CLICOLOR=true
 
-fpath=($ZSH/functions $fpath)
+fpath=($ZSH/functions $ZSH/completion $fpath)
 
 autoload -U $ZSH/functions/*(:t)
 
