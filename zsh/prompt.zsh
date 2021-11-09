@@ -55,7 +55,7 @@ need_push () {
 }
 
 directory_name() {
-  echo "%{$fg_bold[cyan]%}%d%\/%{$reset_color%}"
+  echo "%{$fg_bold[cyan]%}%d%\%{$reset_color%}"
 }
 
 battery_status() {
@@ -75,5 +75,5 @@ set_prompt () {
   export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
 }
 
-PROMPT='╭─ $(whoami)@$(hostname -s)%{$fg_bold[red]%}%(?,, -%?-)%{$reset_color%} $(directory_name) $(git_dirty)
+PROMPT='╭─ $(date +%H:%M) $(whoami)@$(hostname -s)%{$fg_bold[red]%}%(?,, -%?-)%{$reset_color%} $(directory_name) $(git_dirty)
 ╰─%B$%b '
